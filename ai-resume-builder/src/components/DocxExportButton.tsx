@@ -5,7 +5,7 @@ import Docxtemplater from 'docxtemplater'
 import { useResumeStore } from '../store/useResumeStore'
 
 export default function ResumeExporter() {
-  const { userInput, certifications, education } = useResumeStore()
+  const { userInput, certifications, education, companyExperiences } = useResumeStore()
 
   const handleDownload = async () => {
     try {
@@ -33,6 +33,18 @@ export default function ResumeExporter() {
             major: exp.major || '',
           }))
         : []
+        
+      const formattedCompanyExperience = Array.isArray(companyExperiences)
+        ? companyExperiences.map((exp) => ({
+            companyName: exp.companyName || '',
+            startDate: exp.startDate || '',
+            endDate: exp.endDate || '',
+            currentlyWorking: exp.currentlyWorking ? '재직중' : '',
+            position: exp.position || '',
+            description: exp.description || ''
+          }))
+        : []
+
       doc.setData({
         name: userInput.name || '',
         position: userInput.position || '',
@@ -52,6 +64,7 @@ export default function ResumeExporter() {
         gender: userInput.gender || '',
         birthDate: userInput.birthDate || '',
         education: formattedEducations || '',
+        companyExperiences: formattedCompanyExperience || '',
       })
 
       doc.render()

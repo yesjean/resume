@@ -23,6 +23,15 @@ export interface ResultData {
   experience: string
 }
 
+interface CompanyExperienceItem {
+  companyName: string
+  startDate: string
+  endDate: string
+  currentlyWorking: boolean
+  position: string
+  description: string
+}
+
 interface ResumeState {
   userInput: {
     name: string
@@ -43,25 +52,24 @@ interface ResumeState {
   education: EducationItem[]
   experiences: ExperienceItem[]
   certifications: CertificationItem[]
+  companyExperiences: CompanyExperienceItem[]
   result: string
+
   setUserInput: (input: Partial<ResumeState['userInput']>) => void
   setExperiences: (exps: ExperienceItem[]) => void
-  setResult: (res: string) => void
   setCertification: (certs: CertificationItem[]) => void
-  setEducation: (certs: EducationItem[]) => void
+  setEducation: (edus: EducationItem[]) => void
+  setCompanyExperiences: (cexps: CompanyExperienceItem[]) => void
+  addCompanyExperience: (cexp: CompanyExperienceItem) => void
+  setResult: (res: string) => void
   setResultData: (data: ResultData) => void
   loadFromStorage: () => void
   resetAll: () => void
 }
 
-export const useResumeStore = create<ResumeState>((set) => ({
+export const useResumeStore = create<ResumeState>((set, get) => ({
   userInput: {
     name: '',
-    position: '',
-    experience: '',
-    jobPost: '',
-    tone: '',
-    briefIntro: '',
     phone: '',
     email: '',
     github: '',
@@ -69,15 +77,33 @@ export const useResumeStore = create<ResumeState>((set) => ({
     address: '',
     gender: '',
     birthDate: '',
+    position: '',
+    experience: '',
+    jobPost: '',
+    tone: '',
+    briefIntro: '',
     resultData: {
       introduction: '',
       experience: '',
     },
   },
+  education: [],
   experiences: [],
   certifications: [],
+  companyExperiences: [],
   result: '',
-    education: [],
+
+  setCompanyExperiences: (cexps) => {
+    localStorage.setItem('resume-companyExperiences', JSON.stringify(cexps))
+    set({ companyExperiences: cexps })
+  },
+
+  addCompanyExperience: (cexp) => {
+    const current = get().companyExperiences
+    const updated = [...current, cexp]
+    localStorage.setItem('resume-companyExperiences', JSON.stringify(updated))
+    set({ companyExperiences: updated })
+  },
 
   setUserInput: (input) =>
     set((state) => {
@@ -96,14 +122,14 @@ export const useResumeStore = create<ResumeState>((set) => ({
     set({ certifications: certs })
   },
 
-  setEducation: (certs) => {
-    localStorage.setItem('resume-education', JSON.stringify(certs))
-    set({ education: certs })
+  setEducation: (edus) => {
+    localStorage.setItem('resume-education', JSON.stringify(edus))
+    set({ education: edus })
   },
 
   setResult: (res) => set({ result: res }),
 
-  setResultData: (data: ResultData) =>
+  setResultData: (data) =>
     set((state) => {
       const updated = {
         ...state.userInput,
@@ -117,46 +143,48 @@ export const useResumeStore = create<ResumeState>((set) => ({
     const savedInput = localStorage.getItem('resume-userInput')
     const savedExps = localStorage.getItem('resume-experiences')
     const savedCerts = localStorage.getItem('resume-certifications')
+    const savedEdus = localStorage.getItem('resume-education')
+    const savedCompanyExps = localStorage.getItem('resume-companyExperiences')
 
-    if (savedInput) {
-      set({ userInput: JSON.parse(savedInput) })
-    }
-    if (savedExps) {
-      set({ experiences: JSON.parse(savedExps) })
-    }
-    if (savedCerts) {
-      set({ certifications: JSON.parse(savedCerts) })
-    }
+    if (savedInput) set({ userInput: JSON.parse(savedInput) })
+    if (savedExps) set({ experiences: JSON.parse(savedExps) })
+    if (savedCerts) set({ certifications: JSON.parse(savedCerts) })
+    if (savedEdus) set({ education: JSON.parse(savedEdus) })
+    if (savedCompanyExps) set({ companyExperiences: JSON.parse(savedCompanyExps) })
   },
 
   resetAll: () => {
     localStorage.removeItem('resume-userInput')
     localStorage.removeItem('resume-experiences')
     localStorage.removeItem('resume-certifications')
+    localStorage.removeItem('resume-education')
+    localStorage.removeItem('resume-companyExperiences')
+
     set({
       userInput: {
         name: '',
+        phone: '',
+        email: '',
+        github: '',
+        photo: new File([], ''),
+        address: '',
+        gender: '',
+        birthDate: '',
         position: '',
         experience: '',
         jobPost: '',
         tone: '',
         briefIntro: '',
-        phone: '',
-        email: '',
-        github: '',
-    photo: new File([], ''),
-        address: '',
-        gender: '',
-        birthDate: '',
         resultData: {
           introduction: '',
           experience: '',
         },
       },
+      education: [],
       experiences: [],
       certifications: [],
+      companyExperiences: [],
       result: '',
-    education: [],
     })
   },
 }))
