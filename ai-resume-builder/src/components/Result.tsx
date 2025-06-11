@@ -14,8 +14,8 @@ export default function Result({ activeTab, result }: {
     activeTab: string,
     result: Result
 }) {
-    const [error, setError] = useState<string | null>(null);
-    const [copied, setCopied] = useState(false);
+    const [error] = useState<string | null>(null);
+    const [, setCopied] = useState(false);
 
     // 복사 버튼 클릭 핸들러
     const handleCopy = (type: string) => {

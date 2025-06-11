@@ -12,12 +12,6 @@ import Result from "../components/Result";
 import Button from "../components/Button";
 import CompanyExperience from "../components/CompanyExperience";
 
-interface ExperienceItem {
-  title: string;
-  period: string;
-  activities: string;
-  learnings: string;
-}
 
 interface Result {
   introduction: string;
@@ -25,12 +19,6 @@ interface Result {
   certifications?: string;
 }
 
-interface CompanyExperienceData {
-  companyName: string;
-  startDate: string;
-  endDate: string;
-  currentlyWorking: boolean;
-}
 
 type Tab = "allResume" | "experienceOnly" | "introductionOnly" | "certificationOnly";
 
@@ -51,7 +39,7 @@ export default function Generator() {
 
   const [activeTab, setActiveTab] = useState<Tab>("allResume");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
   const [result, setResult] = useState<Result | null>(null);
   const [step, setStep] = useState(1);
 
@@ -63,30 +51,7 @@ export default function Generator() {
     5: useRef<HTMLDivElement>(null),
   };
 
-  // 회사 경험 여러개 관리
-//   const [companyExperiences, setCompanyExperiences] = useState<CompanyExperienceData[]>([]);
 
-  // 새 회사 경험 입력용 state
-  const [newCompanyExperience, setNewCompanyExperience] = useState<CompanyExperienceData>({
-    companyName: "",
-    startDate: "",
-    endDate: "",
-    currentlyWorking: false,
-  });
-
-  const addCompanyExperience = () => {
-    if (!newCompanyExperience.companyName.trim()) {
-      alert("회사명을 입력해주세요.");
-      return;
-    }
-    setCompanyExperiences(companyExperiences);
-    setNewCompanyExperience({
-      companyName: "",
-      startDate: "",
-      endDate: "",
-      currentlyWorking: false,
-    });
-  };
 
   const handleGenerateAllResume = async () => {
     if (loading || experiences.length === 0) {
