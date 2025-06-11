@@ -137,7 +137,7 @@ export default function CompanyExperience({ companyExperiences, setCompanyExperi
       {/* 자격증 리스트 */}
       {companyExperiences.length > 0 && (
         <div className="mt-4">
-          <h2 className="text-lg font-semibold mb-2">추가된 자격증</h2>
+          <h2 className="text-lg font-semibold mb-2">추가된 경력</h2>
           <ul className="list-disc list-inside space-y-1">
             {companyExperiences.map((exp, idx) => (
               <li key={idx} className="flex justify-between items-center">

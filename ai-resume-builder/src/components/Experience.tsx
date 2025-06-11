@@ -78,7 +78,7 @@ export default function Experience({ experiences, setExperiences }: ExperiencePr
 
       {experiences.length > 0 && (
         <div className="mt-4">
-          <h2 className="text-lg font-semibold mb-2">추가된 경력</h2>
+          <h2 className="text-lg font-semibold mb-2">추가된 프로젝트</h2>
           <ul className="space-y-2">
             {experiences.map((exp, idx) => (
               <li key={idx} className="flex justify-between items-center">
