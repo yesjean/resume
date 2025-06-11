@@ -3,7 +3,7 @@ import type { UserInput } from '../types/resume'
 
 export const generateResumeSection = async (userInput: UserInput): Promise<string> => {
   const response = await axios.post(
-    'http://localhost:4000/api/generate',
+    'https://resume-6mrx.onrender.com/api/generate',
     { userInput }
   )
   return response.data.result

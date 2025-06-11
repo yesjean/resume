@@ -64,7 +64,7 @@ export default function Generator() {
         setResult(null);
 
         try {
-            const response = await axios.post("http://localhost:4000/api/generate", {
+            const response = await axios.post("https://resume-6mrx.onrender.com/api/generate", {
                 userInput: { ...userInput, experiences, certifications, education, companyExperiences },
                 mode: "allResume",
             });
@@ -92,7 +92,7 @@ export default function Generator() {
         setResult(null);
 
         try {
-            const response = await axios.post("http://localhost:4000/api/generate", {
+            const response = await axios.post("https://resume-6mrx.onrender.com/api/generate", {
                 userInput: { ...userInput, experiences },
                 mode: "experienceOnly",
             });
@@ -113,7 +113,7 @@ export default function Generator() {
         setResult(null);
 
         try {
-            const response = await axios.post("http://localhost:4000/api/generate/introduction", {
+            const response = await axios.post("https://resume-6mrx.onrender.com/api/generate/introduction", {
                 userInput,
                 mode: "introductionOnly",
             });
@@ -137,7 +137,7 @@ export default function Generator() {
         setResult(null);
 
         try {
-            const response = await axios.post("http://localhost:4000/api/generate/experience", {
+            const response = await axios.post("https://resume-6mrx.onrender.com/api/generate/experience", {
                 userInput: { ...userInput, certifications },
                 mode: "certificationOnly",
             });
