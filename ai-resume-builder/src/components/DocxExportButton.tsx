@@ -37,7 +37,7 @@ export default function ResumeExporter() {
           return new Uint8Array()  // 다른 타입도 빈 배열 반환
         }
         ,
-        getSize: function (img, tagValue, tagName) {
+        getSize: function () {
           // 이미지 크기 지정 (단위: px)
           // 예: 너비 150px, 높이 150px 고정
           return [150, 150]

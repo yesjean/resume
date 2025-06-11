@@ -4,7 +4,7 @@ import { useResumeStore } from "../store/useResumeStore";
 
 export default function BasicInfo() {
     const { userInput, setUserInput } = useResumeStore();
-    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [, setPreviewUrl] = useState<string | null>(null);
 
     useEffect(() => {
         useResumeStore.getState().loadFromStorage();
