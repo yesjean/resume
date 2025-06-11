@@ -1,20 +1,47 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useResumeStore } from "../store/useResumeStore";
 
 export default function BasicInfo() {
     const { userInput, setUserInput } = useResumeStore();
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
     useEffect(() => {
         useResumeStore.getState().loadFromStorage();
     }, []);
 
+useEffect(() => {
+  if (userInput.photo && userInput.photo instanceof Blob) {
+    const objectUrl = URL.createObjectURL(userInput.photo);
+    setPreviewUrl(objectUrl);
+
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+    };
+  } else {
+    setPreviewUrl(null);
+  }
+}, [userInput.photo]);
+
+
+
     return (
         <>
-            <input
+            {/* <input
                 type="file"
                 accept="image/*"
                 className="w-full mb-5 text-gray-700 focus:outline-none"
-                onChange={(e) => setUserInput({ ...userInput, photo: e.target.files![0] })}
+                onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) setUserInput({ ...userInput, photo: file });
+                }}
             />
+            {previewUrl && (
+                <img
+                    src={previewUrl}
+                    alt="프로필 사진 미리보기"
+                    className="w-32 h-32 object-cover rounded-full mb-5"
+                />
+            )} */}
             <input
                 className="w-full mb-5 border border-gray-300 rounded-lg px-5 py-3 text-gray-700 placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-300 focus:outline-none transition"
                 placeholder="이름"
@@ -29,9 +56,9 @@ export default function BasicInfo() {
                 onChange={(e) => setUserInput({ ...userInput, gender: e.target.value })}
             >
                 <option value="">성별 선택</option>
-                <option value="male">남성</option>
-                <option value="female">여성</option>
-                <option value="other">기타</option>
+                <option value="남성">남성</option>
+                <option value="여성">여성</option>
+                <option value="기타">기타</option>
             </select>
 
             {/* 생년월일 */}

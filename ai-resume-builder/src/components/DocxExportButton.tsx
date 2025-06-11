@@ -1,11 +1,12 @@
-// components/ResumeExporter.tsx
 import { saveAs } from 'file-saver'
 import PizZip from 'pizzip'
 import Docxtemplater from 'docxtemplater'
 import { useResumeStore } from '../store/useResumeStore'
+import ImageModule from 'docxtemplater-image-module-free'
 
 export default function ResumeExporter() {
   const { userInput, certifications, education, companyExperiences } = useResumeStore()
+
 
   const handleDownload = async () => {
     try {
@@ -13,36 +14,70 @@ export default function ResumeExporter() {
       const templateBuffer = await res.arrayBuffer()
 
       const zip = new PizZip(templateBuffer)
+
+      // 이미지 모듈 설정
+      const imageModule = new ImageModule({
+        centered: false,
+        getImage: function (tagValue) {
+          if (!tagValue) return new Uint8Array()  // null 대신 빈 배열 반환
+
+          if (typeof tagValue === "string") {
+            const base64Data = tagValue.replace(/^data:image\/\w+;base64,/, "")
+            const binaryString = atob(base64Data)
+            const length = binaryString.length
+            const bytes = new Uint8Array(length)
+            for (let i = 0; i < length; i++) {
+              bytes[i] = binaryString.charCodeAt(i)
+            }
+            return bytes
+          }
+
+          console.warn("Unsupported image type")
+          return new Uint8Array()  // 다른 타입도 빈 배열 반환
+        }
+        ,
+        getSize: function (img, tagValue, tagName) {
+          // 이미지 크기 지정 (단위: px)
+          // 예: 너비 150px, 높이 150px 고정
+          return [150, 150]
+        }
+      })
+
       const doc = new Docxtemplater(zip, {
         paragraphLoop: true,
         linebreaks: true,
+        modules: [imageModule],  // 이미지 모듈 등록
       })
 
-      // certifications 배열 데이터 가공 (없으면 빈 배열)
+      const now = new Date()
+      const year = now.getFullYear().toString().slice(-2)
+      const month = String(now.getMonth() + 1).padStart(2, "0")
+      const day = String(now.getDate()).padStart(2, "0")
+
       const formattedCertifications = Array.isArray(certifications)
         ? certifications.map((exp) => ({
-            title: exp.title || '',
-            date: exp.date || '',
-          }))
+          title: exp.title || '',
+          date: exp.date || '',
+        }))
         : []
 
       const formattedEducations = Array.isArray(education)
         ? education.map((exp) => ({
-            title: exp.title || '',
-            period: exp.period || '',
-            major: exp.major || '',
-          }))
+          title: exp.title || '',
+          period: exp.period || '',
+          major: exp.major || '',
+        }))
         : []
-        
+
       const formattedCompanyExperience = Array.isArray(companyExperiences)
         ? companyExperiences.map((exp) => ({
-            companyName: exp.companyName || '',
-            startDate: exp.startDate || '',
-            endDate: exp.endDate || '',
-            currentlyWorking: exp.currentlyWorking ? '재직중' : '',
-            position: exp.position || '',
-            description: exp.description || ''
-          }))
+          companyName: exp.companyName || '',
+          startDate: exp.startDate || '',
+          endDate: exp.endDate || '',
+          currentlyWorking: exp.currentlyWorking ? '재직중' : '',
+          position: exp.position || '',
+          description: exp.description || '',
+        }))
         : []
 
       doc.setData({
@@ -52,6 +87,9 @@ export default function ResumeExporter() {
         experience: userInput.resultData?.experience || '',
         certifications: formattedCertifications,
 
+        // 이미지 태그에 photo 필드 전달
+        photo: userInput.photo || '',
+
         // 추가 userInput 필드들
         jobPost: userInput.jobPost || '',
         tone: userInput.tone || '',
@@ -59,12 +97,14 @@ export default function ResumeExporter() {
         phone: userInput.phone || '',
         email: userInput.email || '',
         github: userInput.github || '',
-        // photo는 파일 객체라 docx 템플릿에 직접 넣기 어렵고, 보통 별도 처리 필요
         address: userInput.address || '',
         gender: userInput.gender || '',
         birthDate: userInput.birthDate || '',
         education: formattedEducations || '',
         companyExperiences: formattedCompanyExperience || '',
+        YEAR: year,
+        MONTH: month,
+        DAY: day,
       })
 
       doc.render()
